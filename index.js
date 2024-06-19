@@ -106,6 +106,7 @@ app.post("/pay", async (req, res) => {
       setupIntent: setupIntent.client_secret,
       ephemeralKey: ephemeralKey.secret,
       customer: customer.id,
+      email: customer.email
     });
   });
   app.get("/charge-customer", async (req, res) => {
@@ -151,21 +152,40 @@ app.post("/pay", async (req, res) => {
     });
   });
 
+  // app.post("/payByCustomer", async (req, res) => {
+  //   try {
+  //     const paymentIntent = await stripe.paymentIntents.create({
+  //       amount: 1500,
+  //       currency: "INR",
+  //       payment_method_types: ["card"],
+  //       customer:"cus_QJIb6gfuYFAf0a",
+  //       payment_method:'pm_1PSg0LSJIGArQAxoi2OfEqxg',
+  //       setup_future_usage: 'on_session',
+  //       payment_method_options: {
+  //         card: {
+  //           request_three_d_secure: 'automatic',
+  //         },
+  //       },
+  //     });
+  //     const clientSecret = paymentIntent.client_secret;
+  //     res.json({ message: "Payment initiated", clientSecret });
+  //   } catch (err) {
+  //     console.error(err);
+  //     res.status(500).json({ message: "Internal server error" });
+  //   }
+  // });
   app.post("/payByCustomer", async (req, res) => {
     try {
+    
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: 1500,
-        currency: "INR",
-        payment_method_types: ["card"],
-        customer:"cus_Q22Uo0BTtOfUlv",
-        payment_method:'pm_1PByQBSJIGArQAxoHyMfEkbv',
-        setup_future_usage: 'on_session',
-        payment_method_options: {
-          card: {
-            request_three_d_secure: 'automatic',
-          },
-        },
+        amount: 1500, 
+      currency: "INR", 
+      customer: "cus_QJurxrOGHc9ljm", 
+      payment_method: 'pm_1PTH2QSJIGArQAxoQFCNTXEq', 
+      off_session: true, 
+      confirm: true, 
       });
+  
       const clientSecret = paymentIntent.client_secret;
       res.json({ message: "Payment initiated", clientSecret });
     } catch (err) {
