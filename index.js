@@ -119,6 +119,53 @@ app.post("/payment-sheet", async (req, res) => {
     email: req.body.email,
   });
 });
+
+app.post("/create-payment-sheet", async (req, res) => {
+  // const { email = `test${Math.floor(Math.random() * 9999) + 1}@domain.com` } =
+  //   req.body.email;
+  // console.log("emaill", req.body.email);
+  // const email = "email:'" + req.body.email + "'";
+  const { email, amount } = req.body;
+  const customers = await stripe.customers.search({
+    query: `email:'${email}'`,
+  });
+
+  // console.log("cus", customers);
+
+  // const stripe = new Stripe(stripeSecretKey, {
+  //   apiVersion: '2024-04-10',
+  //   typescript: true,
+  // });
+  var customer = null;
+  if (customers.data.length > 0) {
+    customer = customers.data[0];
+  } else {
+    customer = await stripe.customers.create({ email });
+  }
+  // const customer = await stripe.customers.create({ email });
+
+  const ephemeralKey = await stripe.ephemeralKeys.create(
+    { customer: customer.id },
+    { apiVersion: "2024-04-10" }
+  );
+  // console.log("id", customer);
+  // const setupIntent = await stripe.setupIntents.create({
+  //   customer: customer.id,
+  //   payment_method_types: ["card"],
+  // });
+  const paymentIntent = await stripe.paymentIntents.create({
+    customer: customer.id,
+    amount,
+    currency: "usd",
+    payment_method_types: ["card", "link"],
+  });
+  return res.json({
+    paymentIntent: paymentIntent.client_secret,
+    ephemeralKey: ephemeralKey.secret,
+    customer: customer.id,
+    email,
+  });
+});
 // app.get("/get-customer", async (req, res) => {
 //   console.log("emaill", req.body.email);
 //   const email = "email:'" + req.body.email + "'";
