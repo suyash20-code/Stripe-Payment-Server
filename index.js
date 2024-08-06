@@ -452,6 +452,6 @@ app.post("/update-card-details", async (req, res) => {
 //   res.json({ ok: true });
 // });
 app.get("/", (req, res) => {
-  res.send("Hello, Node.js!");
+  res.send("Helllo, Node.js!");
 });
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
