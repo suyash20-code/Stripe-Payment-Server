@@ -10,7 +10,7 @@ app.use("/stripe", express.raw({ type: "*/*" }));
 app.use(express.json());
 app.use(cors());
 app.get("/", (req, res) => {
-  res.send("Hello, Node.js!");
+  res.send("Hellso, Node.js!");
 });
 app.post("/pay", async (req, res) => {
   try {
